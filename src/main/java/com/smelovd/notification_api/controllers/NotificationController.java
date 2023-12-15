@@ -20,7 +20,7 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping("/send_notification")
-    public ResponseEntity<?> sendNotification(@RequestParam("file") MultipartFile file, @RequestParam String message) {
+    public ResponseEntity<?> sendNotification(@RequestParam("file") MultipartFile file, @RequestParam("message") String message) {
         log.info("try to send notification \"{}\"", message);
         if (file.isEmpty() || message == null) {
             log.warn("message \"{}\" or file is empty ", message);
@@ -28,6 +28,7 @@ public class NotificationController {
         }
         log.info("notification data is valid");
         try {
+            notificationService.saveRequest(file, message);
             notificationService.send(file);
             log.info("{} {} sent", file.getOriginalFilename(), message);
         } catch (Exception ex) {

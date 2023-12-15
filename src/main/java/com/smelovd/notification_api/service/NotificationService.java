@@ -48,4 +48,8 @@ public class NotificationService {
         System.out.println(id + " " + serviceUserId + " " + service);
         return new Notification(id, serviceUserId, service, notificationId);
     }
+
+    public void saveRequest(MultipartFile file, String message) {
+
+    }
 }
