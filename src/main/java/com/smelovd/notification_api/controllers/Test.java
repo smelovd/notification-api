@@ -1,4 +1,4 @@
-package com.smelovd.notification_api;
+package com.smelovd.notification_api.controllers;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -12,18 +12,18 @@ import org.springframework.web.client.RestTemplate;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 
 public class Test {
 
-    @org.junit.jupiter.api.Test
-    void sendNotification() throws NoSuchAlgorithmException {
+    public static void main(String[] args) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("message", "message");
-        body.add("file", new FileSystemResource(new File("test_table1.csv")));
+        body.add("file", new FileSystemResource(new File("src/main/resources/test_table1.csv")));
 
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(body, headers);
 
