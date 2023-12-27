@@ -7,13 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.sql.Timestamp;
@@ -26,30 +27,35 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final KafkaTemplate<String, Notification> kafkaTemplate;
 
-    @Async
-    public void send(MultipartFile file) {
-        log.info("try send notification");
-        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            Iterable<CSVRecord> records = CSVFormat.RFC4180.builder().setHeader("id", "service_user_id", "notification_service", "notification_id").build().parse(reader);
-            log.info("file is valid \"{}\"", file.getOriginalFilename());
-            Flux.fromIterable(records)
-                    .flatMap(this::mapNotification)
-                    .doOnNext(n -> kafkaTemplate.send("notifications", n))
-                    .subscribe(notificationRepository::save);
-            System.out.println("complete");
-        } catch (Exception ex) {
-            log.error("file has problem");
-            throw new RuntimeException(ex);
-        }
+    //@Async
+    public Mono<Void> pushFileEventsToKafkaAndDatabase(MultipartFile file, String id) throws IOException {
+        log.info("sending notification \"{}\"", file.getOriginalFilename());
+        return Flux.fromIterable(getRecords(file))
+                .flatMap(r -> mapNotification(r, id))
+                //.doOnNext(n -> kafkaTemplate.send("notifications", n))
+                .doOnNext(n -> notificationRepository.insert(n).subscribe())
+                .subscribeOn(Schedulers.boundedElastic())
+                .then();
     }
 
-    private Mono<Notification> mapNotification(CSVRecord record) {
-        Long id = Long.valueOf(record.get("id"));
+    private Iterable<CSVRecord> getRecords(MultipartFile file) throws IOException {
+        log.info("file parsing");
+        Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+            return CSVFormat.RFC4180.builder()
+                    .setHeader("id", "service_user_id", "notification_service").build().parse(reader);
+
+    }
+
+    private Mono<Notification> mapNotification(CSVRecord record, String notificationId) {
+        log.info("mapping notification, " + record);
+        String fileId = record.get("id");
         String serviceUserId = record.get("service_user_id");
         String service = record.get("notification_service");
-        Long notificationId = Long.valueOf(record.get("notification_id"));
-
-        System.out.println(id + " " + serviceUserId + " " + service);
-        return Mono.just((new Notification(id, serviceUserId, service, notificationId, new Timestamp(System.currentTimeMillis()))));
+        return Mono.just(Notification.builder()
+                .fileId(fileId)
+                .serviceUserId(serviceUserId)
+                .notificationService(service)
+                .notificationId(notificationId)
+                .timestamp(new Timestamp(System.currentTimeMillis())).build());
     }
 }

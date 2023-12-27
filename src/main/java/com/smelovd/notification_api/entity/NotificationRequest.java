@@ -7,23 +7,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 
 @Data
-//@Document
+@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class NotificationRequest {
 
     @Id
-    private Long id;
-
-    private MultipartFile file;
-
+    private String id;
+    private byte[] file;
     private String message;
-
     private Timestamp timestamp;
+    private NotificationRequestStatus notificationRequestStatus;
 }

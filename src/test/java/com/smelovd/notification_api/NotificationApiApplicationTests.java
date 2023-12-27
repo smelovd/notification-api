@@ -19,9 +19,4 @@ class NotificationApiApplicationTests {
     @Test
     void contextLoads() {
     }
-
-    @Test
-    void sendNotification() {
-
-    }
 }

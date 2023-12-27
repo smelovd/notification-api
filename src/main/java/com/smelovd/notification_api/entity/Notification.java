@@ -1,6 +1,7 @@
 package com.smelovd.notification_api.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -9,22 +10,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.sql.Timestamp;
 
 @Data
-@Document
+@Document()
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Notification {
 
     @Id
-    private Long id;
-
+    private String id;
+    private String fileId;
     private String serviceUserId;
-
     private String notificationService;
-
-    private Long notificationId;
-
+    private String notificationId;
     private Timestamp timestamp;
-/*
-    @Column(name = "count_try")
-    private Long countTry;*/
 }
