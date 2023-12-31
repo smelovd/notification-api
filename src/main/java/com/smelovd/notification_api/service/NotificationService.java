@@ -1,6 +1,7 @@
 package com.smelovd.notification_api.service;
 
 import com.smelovd.notification_api.entity.Notification;
+import com.smelovd.notification_api.entity.NotificationStatus;
 import com.smelovd.notification_api.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,19 +28,18 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final KafkaTemplate<String, Notification> kafkaTemplate;
 
-    //@Async
     public Mono<Void> pushFileEventsToKafkaAndDatabase(MultipartFile file, String id) throws IOException {
         log.info("sending notification \"{}\"", file.getOriginalFilename());
         return Flux.fromIterable(getRecords(file))
                 .flatMap(r -> mapNotification(r, id))
-                //.doOnNext(n -> kafkaTemplate.send("notifications", n))
+                .doOnNext(n -> kafkaTemplate.send("notifications", n))
                 .doOnNext(n -> notificationRepository.insert(n).subscribe())
                 .subscribeOn(Schedulers.boundedElastic())
                 .then();
     }
 
     private Iterable<CSVRecord> getRecords(MultipartFile file) throws IOException {
-        log.info("file parsing");
+        log.info("file parsing " + file.getOriginalFilename());
         Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
             return CSVFormat.RFC4180.builder()
                     .setHeader("id", "service_user_id", "notification_service").build().parse(reader);
@@ -56,6 +56,7 @@ public class NotificationService {
                 .serviceUserId(serviceUserId)
                 .notificationService(service)
                 .notificationId(notificationId)
+                .status(NotificationStatus.CREATED)
                 .timestamp(new Timestamp(System.currentTimeMillis())).build());
     }
 }

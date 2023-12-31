@@ -19,8 +19,9 @@ public class NotificationRequest {
 
     @Id
     private String id;
-    private byte[] file;
+    //private byte[] file;
+    //TODO filepath to file
     private String message;
     private Timestamp timestamp;
-    private NotificationRequestStatus notificationRequestStatus;
+    private NotificationRequestStatus status;
 }

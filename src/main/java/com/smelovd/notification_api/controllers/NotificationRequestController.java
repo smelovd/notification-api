@@ -1,5 +1,6 @@
 package com.smelovd.notification_api.controllers;
 
+import com.smelovd.notification_api.entity.NotificationRequest;
 import com.smelovd.notification_api.service.NotificationRequestService;
 import com.smelovd.notification_api.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,11 @@ public class NotificationRequestController {
         log.info("try to send notification \"{}\", to users in file \"{}\"",
                 message, file.getOriginalFilename());
         try {
-            notificationRequestService.validateFile(file);
-            notificationRequestService.saveRequest(message, file)
-                    .subscribe();
-            notificationService.pushFileEventsToKafkaAndDatabase(file, "1").subscribe();
+            //notificationRequestService.validateFile(file);
+            NotificationRequest request =notificationRequestService.saveRequest(message, file)
+                            .block();
+            log.info("saved request " + request);
+            notificationService.pushFileEventsToKafkaAndDatabase(file, request.getId()).subscribe();
             return new ResponseEntity<>("notifications add to queue", HttpStatus.OK);
         } catch (IOException e) {
             log.info("send failed \"{}\", to users in file \"{}\"",

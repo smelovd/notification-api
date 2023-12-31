@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.sql.Timestamp;
 
 @Data
-@Document()
+@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,4 +23,5 @@ public class Notification {
     private String notificationService;
     private String notificationId;
     private Timestamp timestamp;
+    private NotificationStatus status;
 }
