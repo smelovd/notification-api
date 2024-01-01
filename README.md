@@ -1,7 +1,10 @@
 Emergency notification System
 -----------------------------
-about
+This project focuses on creating an emergency notification system that enables the swift and efficient distribution of important alerts during critical situations. It utilizes various technologies to ensure rapid message delivery in cases of emergencies, such as natural disasters or accidents.
 
+Stack
+------
+Spring Framework: Boot, Data; Mongo, Kafka, Redis, Maven, Docker
 
 Application architecture
 -----------------------------
@@ -9,19 +12,44 @@ Application architecture
 ![image](https://github.com/smelovd/notification-api/assets/102801923/7247cc66-2724-4ef8-93a9-b58b0c0c67cc)
 
 
-Api: https://github.com/smelovd/notification-api
-Worker: https://github.com/smelovd/notification-worker
-Checker: https://github.com/smelovd/notification-checker
+`Api`: https://github.com/smelovd/notification-api <br />
+`Worker`: https://github.com/smelovd/notification-worker <br />
+`Checker`: https://github.com/smelovd/notification-checker <br />
 
 
 How to run?
 -----------------------------
 
-You can just run this docker-compose.yml
+You can just run this `docker-compose.yml`, 
 
 ```yml
 version: '3'
 services:
+  api:
+    image: bdhb8g6ed8c/notification-api
+    container_name: "api"
+    depends_on:
+      - mongodb
+      - kafka
+    ports:
+      - "8080:8080"
+    links:
+      - mongodb
+      - kafka
+  worker:
+    image: bdhb8g6ed8c/notification-worker
+    #container_name: "worker"
+    depends_on:
+      - redis
+      - mongodb
+      - kafka
+    links:
+      - redis
+      - mongodb
+      - kafka
+    deploy:
+      mode: replicated
+      replicas: 2
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: "zookeeper"
@@ -63,31 +91,6 @@ services:
     restart: always
     ports:
       - "6379:6379"
-  api:
-    image: bdhb8g6ed8c/notification-api
-    container_name: "api"
-    depends_on:
-      - mongodb
-      - kafka
-    ports:
-      - "8080:8080"
-    links:
-      - mongodb
-      - kafka
-  worker:
-    image: bdhb8g6ed8c/notification-worker
-    #container_name: "worker"
-    depends_on:
-      - redis
-      - mongodb
-      - kafka
-    links:
-      - redis
-      - mongodb
-      - kafka
-    deploy:
-      mode: replicated
-      replicas: 2
 ```
 
 Usage:
