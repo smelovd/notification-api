@@ -2,24 +2,27 @@ Emergency notification System
 -----------------------------
 This project focuses on creating an emergency notification system that enables the swift and efficient distribution of important alerts during critical situations. It utilizes various technologies to ensure rapid message delivery in cases of emergencies, such as natural disasters or accidents.
 
+Navigation
+----------
+* [Stack](https://github.com/smelovd/notification-api/edit/main/README.md#stack)
+* [Application architecture](https://github.com/smelovd/notification-api/edit/main/README.md#application-architecture)
+* [How to run?](https://github.com/smelovd/notification-api/tree/main#how-to-run)
+
 Stack
 ------
 Spring Framework: Boot, Data; Mongo, Kafka, Redis, Maven, Docker
 
 Application architecture
 -----------------------------
-
 ![image](https://github.com/smelovd/notification-api/assets/102801923/7247cc66-2724-4ef8-93a9-b58b0c0c67cc)
 
-
-`Api`: https://github.com/smelovd/notification-api <br />
-`Worker`: https://github.com/smelovd/notification-worker <br />
-`Checker`: https://github.com/smelovd/notification-checker <br />
+* [Api](https://github.com/smelovd/notification-api) <br />
+* [Worker](https://github.com/smelovd/notification-worker) <br />
+* [Checker](https://github.com/smelovd/notification-checker) <br />
 
 
 How to run?
------------------------------
-
+-----------------------------------------------------------------------
 You can just run this `docker-compose.yml`, 
 
 ```yml
