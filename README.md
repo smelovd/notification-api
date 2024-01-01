@@ -4,8 +4,8 @@ This project focuses on creating an emergency notification system that enables t
 
 Navigation
 ----------
-* [Stack](https://github.com/smelovd/notification-api/edit/main/README.md#stack)
-* [Application architecture](https://github.com/smelovd/notification-api/edit/main/README.md#application-architecture)
+* [Stack](https://github.com/smelovd/notification-api/tree/main#stack)
+* [Application architecture](https://github.com/smelovd/notification-api/tree/main#application-architecture)
 * [How to run?](https://github.com/smelovd/notification-api/tree/main#how-to-run)
 
 Stack
